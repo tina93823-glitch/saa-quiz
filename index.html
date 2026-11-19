@@ -574,7 +574,7 @@ function render() {
   document.getElementById('ai-msgs').innerHTML = '';
   const totalQ = activeList.length;
   const qIdx = cur;
-  const zh = ZH_DATA[q.id];
+  const zh = (window.ZH_DATA && window.ZH_DATA[q.id]) || null;
 
   // progress
   document.getElementById('prog').style.width = ((qIdx + 1) / totalQ * 100) + '%';
@@ -756,7 +756,7 @@ function showResultBanner(q) {
 }
 
 function showExpl(q) {
-  const zh = ZH_DATA[q.id];
+  const zh = (window.ZH_DATA && window.ZH_DATA[q.id]) || null;
   const ec = document.getElementById('expl-card');
   const wyEl = document.getElementById('expl-why-text');
   const optsEl = document.getElementById('expl-opts');
