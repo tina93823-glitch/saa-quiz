@@ -393,11 +393,11 @@ let ALL_QUESTIONS = [];
 window.addEventListener('load', () => {
   ALL_QUESTIONS = (window.QUESTION_DATA && window.QUESTION_DATA.tests && window.QUESTION_DATA.tests[0] && window.QUESTION_DATA.tests[0].questions) || [];
   activeList = ALL_QUESTIONS.map((_, i) => i);
+  showDash();
   if (!apiKey) {
     document.getElementById('api-modal').style.display = 'flex';
   } else {
     document.getElementById('api-modal').style.display = 'none';
-    showDash();
   }
   updateDashCounts();
 });
