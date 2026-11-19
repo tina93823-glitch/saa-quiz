@@ -805,23 +805,29 @@ async function sendAi() {
   const thinking = addAiMsg('thinking', 'Gemini 思考中…');
   const q = getQ();
   const ctx = `你是 AWS SAA-C03 考試的解題助教。以下是正在討論的題目：\n\n【題目】${q.question}\n\n【正確答案】${q.correctAnswer.join(', ')}\n\n請用繁體中文簡潔回答學生的問題，聚焦在 AWS 服務概念。`;
-  try {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: [{ parts: [{ text: ctx + '\n\n【學生問題】' + txt }] }], generationConfig: { temperature: 0.4, maxOutputTokens: 600 } })
-    });
-    const data = await res.json();
-    thinking.remove();
-    if (data.candidates && data.candidates[0]) {
-      addAiMsg('bot', data.candidates[0].content.parts[0].text);
-    } else {
-      const errMsg = data.error ? data.error.message : JSON.stringify(data);
-      addAiMsg('bot', 'API 錯誤：' + errMsg);
-    }
-  } catch (e) {
-    thinking.remove();
-    addAiMsg('bot', '連線失敗，請確認 API Key 是否正確。錯誤：' + e.message);
+  const models = ['gemini-3.8-flash','gemini-3.6-flash','gemini-3.5-flash'];
+  const payload = JSON.stringify({ contents: [{ parts: [{ text: ctx + '\n\n【學生問題】' + txt }] }], generationConfig: { temperature: 0.4, maxOutputTokens: 600 } });
+  let answered = false;
+  for (const model of models) {
+    try {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload
+      });
+      const data = await res.json();
+      if (data.candidates && data.candidates[0]) {
+        thinking.remove();
+        addAiMsg('bot', data.candidates[0].content.parts[0].text);
+        answered = true; break;
+      }
+      if (data.error && !data.error.message.includes('high demand') && !data.error.message.includes('overloaded')) {
+        thinking.remove();
+        addAiMsg('bot', 'API 錯誤：' + data.error.message);
+        answered = true; break;
+      }
+    } catch (e) { /* 繼續試下一個 */ }
   }
+  thinking.remove();
+  if (!answered) addAiMsg('bot', 'Gemini 目前流量過高，請稍後再試。');
   sendBtn.disabled = false;
 }
 
