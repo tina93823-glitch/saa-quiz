@@ -806,7 +806,7 @@ async function sendAi() {
   const q = getQ();
   const ctx = `你是 AWS SAA-C03 考試的解題助教。以下是正在討論的題目：\n\n【題目】${q.question}\n\n【正確答案】${q.correctAnswer.join(', ')}\n\n請用繁體中文簡潔回答學生的問題，聚焦在 AWS 服務概念。`;
   try {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ contents: [{ parts: [{ text: ctx + '\n\n【學生問題】' + txt }] }], generationConfig: { temperature: 0.4, maxOutputTokens: 600 } })
     });
