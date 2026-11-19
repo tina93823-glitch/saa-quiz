@@ -385,12 +385,13 @@ let examAnswers = {};
 let EXAM_QUESTIONS = [];
 let hideZh = false, hideEn = false;
 let cur = 0, activeList = [], aiOpen = false;
-const ALL_QUESTIONS = (window.QUESTION_DATA && window.QUESTION_DATA.tests && window.QUESTION_DATA.tests[0] && window.QUESTION_DATA.tests[0].questions) || [];
+let ALL_QUESTIONS = [];
 
 // ═══════════════════════════════════
 // BOOT
 // ═══════════════════════════════════
 window.addEventListener('load', () => {
+  ALL_QUESTIONS = (window.QUESTION_DATA && window.QUESTION_DATA.tests && window.QUESTION_DATA.tests[0] && window.QUESTION_DATA.tests[0].questions) || [];
   activeList = ALL_QUESTIONS.map((_, i) => i);
   if (!apiKey) {
     document.getElementById('api-modal').style.display = 'flex';
