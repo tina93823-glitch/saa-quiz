@@ -574,7 +574,7 @@ function render() {
   document.getElementById('ai-msgs').innerHTML = '';
   const totalQ = activeList.length;
   const qIdx = cur;
-  const zh = (window.ZH_DATA && window.ZH_DATA[q.id]) || null;
+  const zh = (window.ZH_DATA && window.ZH_DATA[String(q.id)]) || null;
 
   // progress
   document.getElementById('prog').style.width = ((qIdx + 1) / totalQ * 100) + '%';
@@ -756,7 +756,7 @@ function showResultBanner(q) {
 }
 
 function showExpl(q) {
-  const zh = (window.ZH_DATA && window.ZH_DATA[q.id]) || null;
+  const zh = (window.ZH_DATA && window.ZH_DATA[String(q.id)]) || null;
   const ec = document.getElementById('expl-card');
   const wyEl = document.getElementById('expl-why-text');
   const optsEl = document.getElementById('expl-opts');
@@ -832,7 +832,7 @@ async function sendAi() {
   const q = getQ();
   const ctx = `你是 AWS SAA-C03 考試的專業解題助教。以下是正在討論的題目：\n\n【題目】${q.question}\n\n【選項】${q.options.map(o=>`${o.key}. ${o.text}`).join('\n')}\n\n【正確答案】${q.correctAnswer.join(', ')}\n\n請用繁體中文詳細回答學生的問題。回答時請：\n1. 解釋題目情境與關鍵需求\n2. 說明為什麼正確答案是對的\n3. 解釋其他選項為什麼錯誤\n4. 補充相關 AWS 服務的核心概念\n請盡量詳細，使用 Markdown 格式（粗體、條列）讓回答更清楚。`;
   const models = ['gemini-3.8-flash','gemini-3-flash','gemini-2.5-flash-lite'];
-  const payload = JSON.stringify({ contents: [{ parts: [{ text: ctx + '\n\n【學生問題】' + txt }] }], generationConfig: { temperature: 0.4, maxOutputTokens: 8192 } });
+  const payload = JSON.stringify({ contents: [{ parts: [{ text: ctx + '\n\n【學生問題】' + txt }] }], generationConfig: { temperature: 0.4, maxOutputTokens: 2048 } });
   let resultMsg = 'Gemini 目前流量過高，請稍後再試。';
   for (const model of models) {
     try {
